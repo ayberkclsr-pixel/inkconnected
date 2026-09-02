@@ -1,4 +1,4 @@
-﻿import { prisma } from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import SearchFilters from '@/components/SearchFilters'
 import ArtistCard from '@/components/ArtistCard'
 import { Filter } from 'lucide-react'
@@ -42,29 +42,36 @@ export default async function DiscoverPage({
     }
   }
 
-  const artists = await prisma.artistProfile.findMany({
-    where,
-    include: {
-      user: true,
-      styles: {
-        include: {
-          tattooStyle: true
-        }
-      },
-      portfolioItems: {
-        take: 1,
-        orderBy: { createdAt: 'desc' }
-      },
-      reviews: true
-    },
-    orderBy: {
-      reviews: {
-        _count: 'desc'
-      }
-    }
-  })
+  let artists: any[] = [];
+  let styles: any[] = [];
 
-  const styles = await prisma.tattooStyle.findMany()
+  try {
+    artists = await prisma.artistProfile.findMany({
+      where,
+      include: {
+        user: true,
+        styles: {
+          include: {
+            tattooStyle: true
+          }
+        },
+        portfolioItems: {
+          take: 1,
+          orderBy: { createdAt: 'desc' }
+        },
+        reviews: true
+      },
+      orderBy: {
+        reviews: {
+          _count: 'desc'
+        }
+      }
+    });
+
+    styles = await prisma.tattooStyle.findMany();
+  } catch (error) {
+    console.error('DiscoverPage database query error:', error);
+  }
 
   return (
     <main className="min-h-screen bg-transparent text-[#f5f5f7] pt-24 md:pt-32 pb-24">

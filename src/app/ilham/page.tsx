@@ -9,36 +9,43 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function IlhamPage() {
-  const posts = await prisma.feedPost.findMany({
-    include: {
-      artistProfile: {
-        include: {
-          user: {
-            select: {
-              name: true,
-              avatar: true,
+  let posts: any[] = [];
+  let topArtists: any[] = [];
+
+  try {
+    posts = await prisma.feedPost.findMany({
+      include: {
+        artistProfile: {
+          include: {
+            user: {
+              select: {
+                name: true,
+                avatar: true,
+              },
             },
           },
         },
       },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
-  const topArtists = await prisma.artistProfile.findMany({
-    where: { isActive: true },
-    take: 5,
-    include: {
-      user: {
-        select: { name: true, avatar: true }
+    topArtists = await prisma.artistProfile.findMany({
+      where: { isActive: true },
+      take: 5,
+      include: {
+        user: {
+          select: { name: true, avatar: true }
+        }
+      },
+      orderBy: {
+        reviews: { _count: 'desc' }
       }
-    },
-    orderBy: {
-      reviews: { _count: 'desc' }
-    }
-  });
+    });
+  } catch (error) {
+    console.error('IlhamPage database query error:', error);
+  }
 
   // Convert Date objects to strings for Client Component serialization
   const serializedPosts = posts.map((post) => ({

@@ -1,4 +1,4 @@
-﻿import { prisma } from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import { authOptions } from '@/lib/auth'
 import { getServerSession } from 'next-auth'
 import { notFound } from 'next/navigation'
@@ -7,11 +7,9 @@ import Link from 'next/link'
 import { Star, MapPin, BadgeCheck } from 'lucide-react'
 import ArtistPageClient from './ArtistPageClient'
 
-export default async function ArtistDetailPage({ params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions)
-  
-  const artist = await prisma.artistProfile.findUnique({
-    where: { id: params.id },
+async function getArtist(id: string) {
+  return await prisma.artistProfile.findUnique({
+    where: { id },
     include: {
       user: true,
       styles: {
@@ -33,14 +31,25 @@ export default async function ArtistDetailPage({ params }: { params: { id: strin
         orderBy: { createdAt: 'desc' }
       }
     }
-  })
+  });
+}
+
+export default async function ArtistDetailPage({ params }: { params: { id: string } }) {
+  const session = await getServerSession(authOptions)
+  
+  let artist: Awaited<ReturnType<typeof getArtist>> = null;
+  try {
+    artist = await getArtist(params.id);
+  } catch (error) {
+    console.error('ArtistDetailPage database query error:', error);
+  }
 
   if (!artist) {
     notFound()
   }
 
   const averageRating = artist.reviews.length > 0
-    ? (artist.reviews.reduce((acc, rev) => acc + rev.rating, 0) / artist.reviews.length).toFixed(1)
+    ? (artist.reviews.reduce((acc: number, rev: any) => acc + rev.rating, 0) / artist.reviews.length).toFixed(1)
     : '5.0'
 
   const coverImage = artist.portfolioItems.length > 0 

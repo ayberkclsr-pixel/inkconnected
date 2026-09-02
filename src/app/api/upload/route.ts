@@ -29,15 +29,23 @@ export async function POST(request: Request) {
     const originalExt = path.extname(file.name);
     const filename = `${timestamp}-${Math.random().toString(36).substring(2, 15)}${originalExt}`;
     
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
+    try {
+      const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+      if (!existsSync(uploadDir)) {
+        await mkdir(uploadDir, { recursive: true });
+      }
+
+      const filepath = path.join(uploadDir, filename);
+      await writeFile(filepath, buffer);
+
+      return NextResponse.json({ url: `/uploads/${filename}` });
+    } catch (fsError) {
+      // In serverless environments like Vercel (read-only filesystem), fallback to base64 Data URL
+      console.warn('Serverless filesystem is read-only, using base64 fallback:', fsError);
+      const base64 = buffer.toString('base64');
+      const dataUrl = `data:${file.type};base64,${base64}`;
+      return NextResponse.json({ url: dataUrl });
     }
-
-    const filepath = path.join(uploadDir, filename);
-    await writeFile(filepath, buffer);
-
-    return NextResponse.json({ url: `/uploads/${filename}` });
   } catch (error) {
     console.error('Upload error:', error);
     return NextResponse.json({ error: 'Dosya yüklenirken bir hata oluştu' }, { status: 500 });

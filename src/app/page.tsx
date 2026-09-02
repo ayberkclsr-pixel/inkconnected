@@ -1,4 +1,4 @@
-﻿import { prisma } from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import CountUpAnimation from '@/components/CountUpAnimation'
@@ -11,39 +11,54 @@ import InteractivePainMap from '@/components/InteractivePainMap'
 import HomeFeatureShowcase from '@/components/HomeFeatureShowcase'
 import TattooHistoryQuotes from '@/components/TattooHistoryQuotes'
 
-export default async function HomePage() {
-  const [artistsCount, stylesCount, reviewsCount] = await prisma.$transaction([
-    prisma.artistProfile.count({ where: { isActive: true } }),
-    prisma.tattooStyle.count(),
-    prisma.review.count()
-  ])
+export const dynamic = 'force-dynamic';
 
-  const topArtists = await prisma.artistProfile.findMany({
-    where: { isActive: true },
-    take: 6,
-    include: {
-      user: true,
-      styles: {
-        include: {
-          tattooStyle: true
+export default async function HomePage() {
+  let artistsCount = 0;
+  let stylesCount = 0;
+  let reviewsCount = 0;
+  let topArtists: any[] = [];
+  let styles: any[] = [];
+
+  try {
+    const [aCount, sCount, rCount] = await prisma.$transaction([
+      prisma.artistProfile.count({ where: { isActive: true } }),
+      prisma.tattooStyle.count(),
+      prisma.review.count()
+    ]);
+    artistsCount = aCount;
+    stylesCount = sCount;
+    reviewsCount = rCount;
+
+    topArtists = await prisma.artistProfile.findMany({
+      where: { isActive: true },
+      take: 6,
+      include: {
+        user: true,
+        styles: {
+          include: {
+            tattooStyle: true
+          }
+        },
+        reviews: true,
+        portfolioItems: {
+          take: 1,
+          orderBy: { createdAt: 'desc' }
         }
       },
-      reviews: true,
-      portfolioItems: {
-        take: 1,
-        orderBy: { createdAt: 'desc' }
+      orderBy: {
+        reviews: {
+          _count: 'desc'
+        }
       }
-    },
-    orderBy: {
-      reviews: {
-        _count: 'desc'
-      }
-    }
-  })
+    });
 
-  const styles = await prisma.tattooStyle.findMany({
-    take: 12
-  })
+    styles = await prisma.tattooStyle.findMany({
+      take: 12
+    });
+  } catch (error) {
+    console.error('HomePage database query error:', error);
+  }
 
   return (
     <main className="min-h-screen bg-transparent text-[#f5f5f7]">
