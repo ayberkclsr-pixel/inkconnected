@@ -1,4 +1,4 @@
-/** @type {import('next').NextConfig} */
+﻿/** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
@@ -14,6 +14,11 @@ const nextConfig = {
         hostname: "images.unsplash.com",
       },
     ],
+  },
+  experimental: {
+    outputFileTracingIncludes: {
+      "/**/*": ["./prisma/dev.db"],
+    },
   },
 };
 
