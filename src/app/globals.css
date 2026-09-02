@@ -1,0 +1,127 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-inter: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
+    --font-outfit: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Outfit', sans-serif;
+  }
+  
+  html {
+    scroll-behavior: auto;
+    background-color: #0b0c10;
+  }
+
+  body {
+    @apply text-[#f5f5f7] font-sans min-h-screen antialiased selection:bg-white/20 selection:text-white;
+    /* Hafif, asil ve gözü yormayan derin atmosferik tonlar */
+    background: 
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.08), transparent),
+      radial-gradient(ellipse 60% 40% at 85% 30%, rgba(99, 102, 241, 0.06), transparent),
+      radial-gradient(ellipse 60% 50% at 15% 60%, rgba(147, 51, 234, 0.05), transparent),
+      radial-gradient(ellipse 70% 40% at 50% 100%, rgba(20, 184, 166, 0.06), transparent),
+      #090a0f;
+    background-attachment: fixed;
+  }
+}
+
+@layer components {
+  /* Apple Precision Buttons */
+  .btn-primary {
+    @apply relative inline-flex items-center justify-center px-6 py-3 text-sm font-medium tracking-tight text-black transition-all duration-200 rounded-full bg-white hover:bg-[#e5e5ea] hover:shadow-[0_0_25px_rgba(255,255,255,0.25)] focus:outline-none focus:ring-2 focus:ring-white/40 active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply relative inline-flex items-center justify-center px-6 py-3 text-sm font-medium tracking-tight text-[#f5f5f7] transition-all duration-200 bg-[#15161c]/80 hover:bg-[#202129] border border-white/10 hover:border-white/20 rounded-full backdrop-blur-xl focus:outline-none focus:ring-2 focus:ring-white/20 active:scale-[0.98];
+  }
+
+  .btn-danger {
+    @apply relative inline-flex items-center justify-center px-6 py-3 text-sm font-medium tracking-tight text-white transition-all duration-200 rounded-full bg-[#ff453a] hover:bg-[#ff3b30] shadow-[0_0_15px_rgba(255,69,58,0.3)] active:scale-[0.98];
+  }
+
+  .btn-glow {
+    @apply relative inline-flex items-center justify-center px-6 py-3 text-sm font-medium tracking-tight text-white transition-all duration-200 rounded-full bg-white/10 hover:bg-white/15 border border-white/20 hover:border-white/40 shadow-[0_0_20px_rgba(255,255,255,0.08)] active:scale-[0.98];
+  }
+
+  /* Apple Pro Frosted Glass Cards */
+  .glass-card {
+    @apply bg-[#13141b]/80 backdrop-blur-2xl border border-white/[0.08] rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] overflow-hidden transition-all duration-300;
+  }
+
+  .glass-card-hover {
+    @apply glass-card hover:bg-[#181a24]/90 hover:border-white/[0.18] hover:shadow-[0_16px_48px_rgba(0,0,0,0.6)] hover:-translate-y-0.5;
+  }
+
+  /* Apple Typography & Gradients */
+  .neon-text {
+    @apply text-white;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-b from-[#ffffff] via-[#e5e5ea] to-[#8e8e93] bg-clip-text text-transparent font-display font-semibold tracking-tight;
+  }
+
+  .section-title {
+    @apply text-3xl md:text-5xl font-display font-bold mb-4 tracking-tight text-white;
+  }
+
+  /* Forms */
+  .input-field {
+    @apply w-full px-4 py-3.5 bg-[#14151c] border border-white/[0.08] rounded-2xl text-white placeholder-[#86868b] transition-all duration-200 focus:bg-[#1a1c26] focus:border-white/30 focus:outline-none focus:ring-1 focus:ring-white/30;
+  }
+
+  /* Misc Components */
+  .badge-style {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/[0.06] text-[#d1d1d6] border border-white/[0.08] backdrop-blur-md;
+  }
+
+  .page-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full;
+  }
+
+  .neon-border {
+    @apply relative rounded-3xl p-[1px] overflow-hidden bg-gradient-to-b from-white/20 via-white/5 to-transparent;
+  }
+  
+  .neon-border > * {
+    @apply relative bg-[#0e1017] rounded-[23px] h-full w-full z-10;
+  }
+}
+
+/* Custom Apple Smooth Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #090a0f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #252834;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3b3f52;
+}
+
+/* Utilities */
+@layer utilities {
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  .transform-style-3d {
+    transform-style: preserve-3d;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
